@@ -17,6 +17,8 @@ export interface FlightSchedule {
   operatingDays: OperatingDays;
   periodStart: string;      // YYYY.MM.DD
   periodEnd: string;        // YYYY.MM.DD
+  naver?: boolean;
+  skyscanner?: boolean;
 }
 
 export interface ApiResponse {

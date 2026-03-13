@@ -11,7 +11,7 @@ interface Props {
 }
 
 export function FlightSchedulePage({ flights, fetchedAt }: Props) {
-  const [filters, setFilters] = useState<FilterState>({ departureAirport: '', arrivalAirport: '', airline: '' })
+  const [filters, setFilters] = useState<FilterState>({ departureAirport: '', arrivalAirport: '', airline: '', coverage: '' })
   const airports = useMemo(() => [...new Set(flights.map(f => f.departureAirport))].sort(), [flights])
   const filtered = useMemo(() => filterFlights(flights, filters), [flights, filters])
 

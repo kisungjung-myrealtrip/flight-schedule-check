@@ -1,6 +1,7 @@
 import { ApiResponse, FlightSchedule } from './types'
 import { fetchScheduleByAirport } from './api/airport'
 import { mergeAndSort } from './normalize'
+import { loadAutomationData, checkCoverage } from './automation'
 
 const AIRPORTS = ['ICN', 'GMP', 'PUS', 'CJU', 'TAE', 'CJJ']
 
@@ -27,6 +28,11 @@ export async function fetchAllFlights(): Promise<ApiResponse> {
     const key = `${flight.flightNumber}_${flight.departureAirport}_${flight.periodStart}`
     if (!seen.has(key)) seen.set(key, flight)
   }
-  const flights = mergeAndSort([], [...seen.values()])
+  const automation = loadAutomationData()
+  const annotated: FlightSchedule[] = [...seen.values()].map(f => ({
+    ...f,
+    ...checkCoverage(f.airline, f.departureAirport, f.arrivalAirport, automation),
+  }))
+  const flights = mergeAndSort([], annotated)
   return { flights, fetchedAt: new Date().toISOString() }
 }

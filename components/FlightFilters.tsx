@@ -30,6 +30,16 @@ export function FlightFilters({ airports, filters, onChange }: Props) {
         value={filters.airline}
         onChange={e => onChange({ ...filters, airline: e.target.value })}
       />
+      <select
+        className="border rounded px-3 py-1.5 text-sm bg-white"
+        value={filters.coverage}
+        onChange={e => onChange({ ...filters, coverage: e.target.value as FilterState['coverage'] })}
+      >
+        <option value="">자동화 전체</option>
+        <option value="naver_missing">네이버 미등록</option>
+        <option value="sky_missing">스카이스캐너 미등록</option>
+        <option value="both_missing">둘 다 미등록</option>
+      </select>
     </div>
   )
 }
