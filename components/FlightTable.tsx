@@ -111,7 +111,7 @@ function FilterDropdown({ col, flights, excluded, pos, anchor, onClose, onToggle
 }
 
 export function FlightTable({ flights }: { flights: FlightSchedule[] }) {
-  const [sort, setSort] = useState<SortState>(null)
+  const [sort, setSort] = useState<SortState>({ col: 'airline', dir: 'asc' })
   const [excluded, setExcluded] = useState<Partial<Record<FilterableCol, Set<string>>>>({})
   const [openFilter, setOpenFilter] = useState<FilterableCol | null>(null)
   const [filterAnchor, setFilterAnchor] = useState<HTMLElement | null>(null)
