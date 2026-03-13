@@ -24,7 +24,7 @@ export async function fetchAllFlights(): Promise<ApiResponse> {
   const seen = new Map<string, FlightSchedule>()
   for (const flight of results.flat()) {
     if (KOREAN_AIRPORTS.has(flight.departureAirport) && KOREAN_AIRPORTS.has(flight.arrivalAirport)) continue
-    const key = `${flight.flightNumber}_${flight.departureAirport}`
+    const key = `${flight.flightNumber}_${flight.departureAirport}_${flight.periodStart}`
     if (!seen.has(key)) seen.set(key, flight)
   }
   const flights = mergeAndSort([], [...seen.values()])
