@@ -3,8 +3,9 @@ import path from 'path'
 
 const KOREAN_AIRPORTS = ['ICN', 'GMP', 'PUS', 'CJU', 'TAE', 'CJJ', 'KWJ']
 
-// 도시코드 → 공항코드 매핑 (cityCode가 실제 IATA 공항코드와 다른 경우)
+// 도시코드 → 공항코드 매핑 (cityCode가 실제 IATA 공항코드와 다른 경우, 또는 복수 공항)
 const CITY_TO_AIRPORTS: Record<string, string[]> = {
+  // 복수 공항 (기존)
   TYO: ['NRT', 'HND'],
   OSA: ['KIX', 'ITM'],
   SPK: ['CTS'],
@@ -15,6 +16,35 @@ const CITY_TO_AIRPORTS: Record<string, string[]> = {
   PAR: ['CDG', 'ORY'],
   LON: ['LHR', 'LGW'],
   MIL: ['MXP', 'LIN'],
+  // 복수 공항 (추가)
+  BKK: ['BKK', 'DMK'],
+  TPE: ['TPE', 'TSA'],
+  BUE: ['EZE', 'AEP'],
+  KIE: ['IEV', 'KBP'],
+  RIO: ['GIG', 'SDU'],
+  MMY: ['SHI', 'MMY'],
+  SAC: ['SCK', 'SMF'],
+  HOU: ['IAH', 'HOU'],
+  BRS: ['BRU', 'CRL'],
+  // 도시코드 ≠ 공항코드
+  ROM: ['FCO'],
+  YTO: ['YYZ'],
+  ORL: ['MCO'],
+  YMQ: ['YUL'],
+  YVC: ['YVR'],
+  CHI: ['ORD'],
+  JKT: ['CGK'],
+  MOW: ['SOV'],
+  NHA: ['CXR'],
+  WAS: ['IAD'],
+  CTU: ['TFU'],
+  SAO: ['GRU'],
+  REY: ['KEF'],
+  STO: ['ARN'],
+  BUC: ['OTP'],
+  BEL: ['BFS'],
+  TEN: ['TFS'],
+  KRS: ['KJA'],
 }
 
 function parseCsvLine(line: string): string[] {
