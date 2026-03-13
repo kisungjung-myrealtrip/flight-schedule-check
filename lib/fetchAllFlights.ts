@@ -1,4 +1,4 @@
-import { ApiResponse } from './types'
+import { ApiResponse, FlightSchedule } from './types'
 import { fetchScheduleByAirport } from './api/airport'
 import { mergeAndSort } from './normalize'
 
@@ -21,7 +21,7 @@ export async function fetchAllFlights(): Promise<ApiResponse> {
   const results = await Promise.all(
     dates.flatMap(schDate => AIRPORTS.map(code => fetchScheduleByAirport(code, schDate)))
   )
-  const seen = new Map<string, ReturnType<typeof results.flat>[number]>()
+  const seen = new Map<string, FlightSchedule>()
   for (const flight of results.flat()) {
     if (KOREAN_AIRPORTS.has(flight.departureAirport) && KOREAN_AIRPORTS.has(flight.arrivalAirport)) continue
     const key = `${flight.flightNumber}_${flight.departureAirport}`
