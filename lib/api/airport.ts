@@ -28,11 +28,13 @@ export async function fetchScheduleByAirport(
     const items = parseXmlItems(xml)
 
     const outFlights = items
-      .map((item: any): FlightSchedule => ({
+      .map((item: any): FlightSchedule => {
+        const isIN = item.internationalIoType === 'IN'
+        return {
         airline: item.internationalNum?.slice(0, 2) ?? '',
         flightNumber: item.internationalNum ?? '',
-        departureAirport: item.airportCode ?? airportCode,
-        arrivalAirport: item.cityCode ?? '',
+        departureAirport: isIN ? (item.cityCode ?? airportCode) : (item.airportCode ?? airportCode),
+        arrivalAirport: isIN ? (item.airportCode ?? '') : (item.cityCode ?? ''),
         departureTime: parseTime(item.internationalTime ?? '0000'),
         operatingDays: parseOperatingDays(
           item.internationalMon, item.internationalTue, item.internationalWed,
@@ -40,7 +42,8 @@ export async function fetchScheduleByAirport(
         ),
         periodStart: parseDate(item.internationalStdate ?? ''),
         periodEnd: parseDate(item.internationalEddate ?? ''),
-      }))
+        }
+      })
 
     all.push(...outFlights)
 

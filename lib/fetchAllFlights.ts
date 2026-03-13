@@ -6,21 +6,27 @@ const AIRPORTS = ['ICN', 'GMP', 'PUS', 'CJU', 'TAE', 'CJJ']
 
 const KOREAN_AIRPORTS = new Set(['ICN', 'GMP', 'PUS', 'CJU', 'TAE', 'CJJ', 'KWJ', 'RSU', 'KUV', 'WJU', 'YNY', 'USN', 'HIN', 'POH'])
 
-function todayKST(): string {
-  // YYYYMMDD 형식, 한국 시간 기준
+function queryDates(): string[] {
   const now = new Date()
   const kst = new Date(now.getTime() + 9 * 60 * 60 * 1000)
-  return kst.toISOString().slice(0, 10).replace(/-/g, '')
+  return [0, 3, 6, 9, 12].map(months => {
+    const d = new Date(kst)
+    d.setMonth(d.getMonth() + months)
+    return d.toISOString().slice(0, 10).replace(/-/g, '')
+  })
 }
 
 export async function fetchAllFlights(): Promise<ApiResponse> {
-  const schDate = todayKST()
+  const dates = queryDates()
   const results = await Promise.all(
-    AIRPORTS.map(code => fetchScheduleByAirport(code, schDate))
+    dates.flatMap(schDate => AIRPORTS.map(code => fetchScheduleByAirport(code, schDate)))
   )
-  const all = results.flat().filter(
-    f => !(KOREAN_AIRPORTS.has(f.departureAirport) && KOREAN_AIRPORTS.has(f.arrivalAirport))
-  )
-  const flights = mergeAndSort([], all)
+  const seen = new Map<string, ReturnType<typeof results.flat>[number]>()
+  for (const flight of results.flat()) {
+    if (KOREAN_AIRPORTS.has(flight.departureAirport) && KOREAN_AIRPORTS.has(flight.arrivalAirport)) continue
+    const key = `${flight.flightNumber}_${flight.departureAirport}`
+    if (!seen.has(key)) seen.set(key, flight)
+  }
+  const flights = mergeAndSort([], [...seen.values()])
   return { flights, fetchedAt: new Date().toISOString() }
 }

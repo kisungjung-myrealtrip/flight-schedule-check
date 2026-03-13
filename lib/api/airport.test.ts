@@ -44,8 +44,8 @@ describe('fetchScheduleByAirport', () => {
     expect(outFlight.departureAirport).toBe('GMP')
     expect(outFlight.arrivalAirport).toBe('HND')
     const inFlight = result.find(f => f.flightNumber === 'NH861')!
-    expect(inFlight.departureAirport).toBe('HND')
-    expect(inFlight.arrivalAirport).toBe('GMP')
+    expect(inFlight.departureAirport).toBe('GMP')
+    expect(inFlight.arrivalAirport).toBe('HND')
     expect(outFlight.departureTime).toBe('07:40')
     expect(outFlight.operatingDays.mon).toBe(true)
     expect(outFlight.periodStart).toBe('2025.10.27')
