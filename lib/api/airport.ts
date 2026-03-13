@@ -28,7 +28,6 @@ export async function fetchScheduleByAirport(
     const items = parseXmlItems(xml)
 
     const outFlights = items
-      .filter((item: any) => item.internationalIoType === 'OUT')
       .map((item: any): FlightSchedule => ({
         airline: item.internationalNum?.slice(0, 2) ?? '',
         flightNumber: item.internationalNum ?? '',

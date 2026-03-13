@@ -2,7 +2,7 @@ import { describe, it, expect, vi } from 'vitest'
 import { fetchScheduleByAirport } from './airport'
 
 describe('fetchScheduleByAirport', () => {
-  it('OUT 타입만 파싱해서 FlightSchedule 배열로 반환한다', async () => {
+  it('IN/OUT 타입 모두 파싱해서 FlightSchedule 배열로 반환한다', async () => {
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,
       text: async () => `<?xml version="1.0"?>
@@ -37,15 +37,18 @@ describe('fetchScheduleByAirport', () => {
     } as any)
 
     const result = await fetchScheduleByAirport('GMP', '20260313')
-    // IN 타입은 제외, OUT만 반환
-    expect(result).toHaveLength(1)
-    expect(result[0].airline).toBe('NH')
-    expect(result[0].flightNumber).toBe('NH862')
-    expect(result[0].departureAirport).toBe('GMP')
-    expect(result[0].arrivalAirport).toBe('HND')
-    expect(result[0].departureTime).toBe('07:40')
-    expect(result[0].operatingDays.mon).toBe(true)
-    expect(result[0].periodStart).toBe('2025.10.27')
-    expect(result[0].periodEnd).toBe('2026.03.29')
+    // IN/OUT 둘 다 반환
+    expect(result).toHaveLength(2)
+    const outFlight = result.find(f => f.flightNumber === 'NH862')!
+    expect(outFlight.airline).toBe('NH')
+    expect(outFlight.departureAirport).toBe('GMP')
+    expect(outFlight.arrivalAirport).toBe('HND')
+    const inFlight = result.find(f => f.flightNumber === 'NH861')!
+    expect(inFlight.departureAirport).toBe('HND')
+    expect(inFlight.arrivalAirport).toBe('GMP')
+    expect(outFlight.departureTime).toBe('07:40')
+    expect(outFlight.operatingDays.mon).toBe(true)
+    expect(outFlight.periodStart).toBe('2025.10.27')
+    expect(outFlight.periodEnd).toBe('2026.03.29')
   })
 })
