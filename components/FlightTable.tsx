@@ -47,6 +47,7 @@ interface FilterDropdownProps {
 
 function FilterDropdown({ col, flights, excluded, pos, anchor, onClose, onToggle, onToggleAll }: FilterDropdownProps) {
   const ref = useRef<HTMLDivElement>(null)
+  const [search, setSearch] = useState('')
 
   useEffect(() => {
     function handleClick(e: MouseEvent) {
@@ -59,6 +60,9 @@ function FilterDropdown({ col, flights, excluded, pos, anchor, onClose, onToggle
   }, [anchor, onClose])
 
   const allValues = [...new Set(flights.map(f => cellValue(f, col)))].sort()
+  const filtered = search
+    ? allValues.filter(v => v.toLowerCase().includes(search.toLowerCase()))
+    : allValues
   const excl = excluded[col] ?? new Set<string>()
   const allSelected = allValues.every(v => !excl.has(v))
 
@@ -76,8 +80,18 @@ function FilterDropdown({ col, flights, excluded, pos, anchor, onClose, onToggle
         />
         전체 선택
       </label>
+      <div className="px-2 py-1.5 border-b">
+        <input
+          type="text"
+          className="w-full border rounded px-2 py-1 text-xs outline-none focus:border-blue-400"
+          placeholder="검색..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          autoFocus
+        />
+      </div>
       <div className="max-h-52 overflow-y-auto">
-        {allValues.map(v => (
+        {filtered.map(v => (
           <label key={v} className="flex items-center gap-2 px-3 py-1.5 hover:bg-gray-50 cursor-pointer text-xs">
             <input
               type="checkbox"
@@ -87,6 +101,9 @@ function FilterDropdown({ col, flights, excluded, pos, anchor, onClose, onToggle
             {v}
           </label>
         ))}
+        {filtered.length === 0 && (
+          <p className="px-3 py-2 text-xs text-gray-400">결과 없음</p>
+        )}
       </div>
     </div>,
     document.body
