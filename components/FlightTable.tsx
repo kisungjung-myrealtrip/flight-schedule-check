@@ -4,6 +4,8 @@ import { createPortal } from 'react-dom'
 import { FlightSchedule } from '@/lib/types'
 import { OperatingDaysCell } from './OperatingDaysCell'
 
+type Pos = { top: number; left: number }
+
 function CoverageCell({ covered }: { covered?: boolean }) {
   if (covered === undefined) return <span className="text-gray-300 text-xs">-</span>
   return covered
@@ -36,20 +38,17 @@ interface FilterDropdownProps {
   col: FilterableCol
   flights: FlightSchedule[]
   excluded: Partial<Record<FilterableCol, Set<string>>>
+  pos: Pos
   anchor: HTMLElement
   onClose: () => void
   onToggle: (col: FilterableCol, value: string) => void
   onToggleAll: (col: FilterableCol, allValues: string[]) => void
 }
 
-function FilterDropdown({ col, flights, excluded, anchor, onClose, onToggle, onToggleAll }: FilterDropdownProps) {
+function FilterDropdown({ col, flights, excluded, pos, anchor, onClose, onToggle, onToggleAll }: FilterDropdownProps) {
   const ref = useRef<HTMLDivElement>(null)
-  const [pos, setPos] = useState({ top: 0, left: 0 })
 
   useEffect(() => {
-    const rect = anchor.getBoundingClientRect()
-    setPos({ top: rect.bottom + window.scrollY, left: rect.left + window.scrollX })
-
     function handleClick(e: MouseEvent) {
       if (ref.current && !ref.current.contains(e.target as Node) && !anchor.contains(e.target as Node)) {
         onClose()
@@ -66,7 +65,7 @@ function FilterDropdown({ col, flights, excluded, anchor, onClose, onToggle, onT
   return createPortal(
     <div
       ref={ref}
-      style={{ position: 'absolute', top: pos.top, left: pos.left, zIndex: 9999 }}
+      style={{ position: 'fixed', top: pos.top, left: pos.left, zIndex: 9999 }}
       className="bg-white border rounded shadow-lg min-w-[160px] py-1"
     >
       <label className="flex items-center gap-2 px-3 py-1.5 hover:bg-gray-50 cursor-pointer text-xs font-semibold border-b">
@@ -99,6 +98,7 @@ export function FlightTable({ flights }: { flights: FlightSchedule[] }) {
   const [excluded, setExcluded] = useState<Partial<Record<FilterableCol, Set<string>>>>({})
   const [openFilter, setOpenFilter] = useState<FilterableCol | null>(null)
   const [filterAnchor, setFilterAnchor] = useState<HTMLElement | null>(null)
+  const [filterPos, setFilterPos] = useState<Pos>({ top: 0, left: 0 })
 
   function handleSort(col: string) {
     setSort(prev =>
@@ -131,6 +131,8 @@ export function FlightTable({ flights }: { flights: FlightSchedule[] }) {
       setOpenFilter(null)
       setFilterAnchor(null)
     } else {
+      const rect = (e.currentTarget as HTMLElement).getBoundingClientRect()
+      setFilterPos({ top: rect.bottom, left: rect.left })
       setOpenFilter(col)
       setFilterAnchor(e.currentTarget as HTMLElement)
     }
@@ -197,6 +199,7 @@ export function FlightTable({ flights }: { flights: FlightSchedule[] }) {
           col={openFilter}
           flights={flights}
           excluded={excluded}
+          pos={filterPos}
           anchor={filterAnchor}
           onClose={() => { setOpenFilter(null); setFilterAnchor(null) }}
           onToggle={toggleValue}
