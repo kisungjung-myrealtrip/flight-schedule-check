@@ -38,6 +38,7 @@ const CITY_TO_AIRPORTS: Record<string, string[]> = {
   NHA: ['CXR'],
   WAS: ['IAD'],
   CTU: ['TFU'],
+  DTT: ['DTW'],
   SAO: ['GRU'],
   REY: ['KEF'],
   STO: ['ARN'],
