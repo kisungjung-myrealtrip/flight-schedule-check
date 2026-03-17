@@ -1,7 +1,7 @@
 import { fetchAllFlights } from '@/lib/fetchAllFlights'
 import { FlightSchedulePage } from '@/components/FlightSchedulePage'
 
-export const revalidate = 604800 // 7일
+export const revalidate = 86400 // 1일
 
 export default async function Home() {
   const { flights, fetchedAt } = await fetchAllFlights()
